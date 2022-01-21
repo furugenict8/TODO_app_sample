@@ -1,3 +1,4 @@
+// Kboyさんの動画の書き方とは違うが一旦これでやってみる。
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Todo {
