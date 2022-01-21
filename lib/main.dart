@@ -1,5 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'main_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,25 +20,28 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('todo app sample'),
-        ),
-        body: Center(
-          child: Column(
-            // Column tal).
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
-              Text(
-                'You have pushed the button this many times:',
-              ),
-            ],
+      home: ChangeNotifierProvider<MainModel>(
+        create: (_) => MainModel()..getTodoList(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('todo app sample'),
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
+          body: Consumer<MainModel>(builder: (context, model, child) {
+            final todoList = model.todoList;
+            return ListView(
+                children: todoList
+                    .map(
+                      (todo) => ListTile(
+                        title: Text(todo.title!),
+                      ),
+                    )
+                    .toList());
+          }),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {},
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
     );
