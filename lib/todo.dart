@@ -5,8 +5,9 @@ class Todo {
   Todo(DocumentSnapshot doc) {
     // doc.data()の型がObject型になっているのが原因かな。なぜ？
     Map docMap = doc.data() as Map<String, dynamic>;
-    title = docMap!['title'];
-    createdAt = docMap!['createdAt'];
+    title = docMap['title'];
+    Timestamp timestamp = docMap['createdAt'];
+    createdAt = timestamp.toDate();
   }
   Map? docMap;
   String? title;
