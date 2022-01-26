@@ -9,7 +9,6 @@ class Todo {
     title = doc['title'];
     createdAt = doc['createdAt'].toDate();
   }
-  //　docMapはdoc.data()をとるための変数。オリジナル動画にはない。
   String? title;
   DateTime? createdAt;
 }
