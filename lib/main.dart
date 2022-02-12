@@ -32,7 +32,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<MainModel>(
-      create: (_) => MainModel()..getTodoListRealtime(),
+      create: (_) => MainModel()..getTodoList(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('todo app sample'),

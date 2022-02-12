@@ -12,8 +12,7 @@ class MainModel extends ChangeNotifier {
       FirebaseFirestore.instance.collection('todoList');
 
   Future getTodoList() async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('todoList').get();
+    final snapshot = await collection.get();
     final docs = snapshot.docs;
     final todoList = docs.map((doc) => Todo(doc)).toList();
     this.todoList = todoList;
