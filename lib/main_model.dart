@@ -5,8 +5,12 @@ import 'package:todoapp/todo.dart';
 class MainModel extends ChangeNotifier {
   // collection todoListのためのListを用意。
   List<Todo> todoList = [];
+
   //　'title'フィールドに入力するためのtodoTextを用意
   String newTodoText = '';
+
+  String id = '';
+
   // Firestoreのcollection(今回はtodoList)を取得しておく。
   CollectionReference collection =
       FirebaseFirestore.instance.collection('todoList');

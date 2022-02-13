@@ -8,7 +8,9 @@ class Todo {
   Todo(DocumentSnapshot doc) {
     title = doc['title'];
     createdAt = doc['createdAt'].toDate();
+    documentID = doc.id;
   }
   String? title;
   DateTime? createdAt;
+  String? documentID;
 }
