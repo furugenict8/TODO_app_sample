@@ -5,9 +5,9 @@ import '../todo.dart';
 import 'edit_todo_model.dart';
 
 class EditTodoPage extends StatelessWidget {
-  // entityを受け取るため、constructorの引数に指定しておく。
+  // Todoを受け取るため、constructorの引数に指定しておく。
   const EditTodoPage(this.todo, {Key? key}) : super(key: key);
-  // entityを受け取るための変数を用意。
+  // Todoを受け取るための変数を用意。
   final Todo todo;
 
   @override
@@ -25,12 +25,12 @@ class EditTodoPage extends StatelessWidget {
             child: Column(
               children: [
                 TextField(
-                  // TextEditingControllerのtextはmodelで初期化され、
-                  // その時に全画面の値が代入されている。
+                  // TextEditingControllerのtextはmodelで初期化されているので、
+                  // 前の画面のtextを持っている。
                   // そのため画面が描画されたときにtextが表示される。
                   controller: model.todoEditTextEditingController,
                   onChanged: (text) {
-                    // テキストが編集された時にやること。
+                    // 入力欄でテキストが編集された時にやること。
                   },
                 ),
                 const SizedBox(
@@ -38,7 +38,7 @@ class EditTodoPage extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // 何かやる。
+                    // 入力されたtextを元にデータベースを更新する処理などをやる
                   },
                   child: const Text('編集'),
                 )
