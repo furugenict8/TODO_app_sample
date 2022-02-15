@@ -94,6 +94,10 @@ class MainPage extends StatelessWidget {
                   fullscreenDialog: true,
                 ),
               );
+              const snackBar = SnackBar(
+                content: Text('追加しました!'),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             },
             child: const Icon(Icons.add),
             tooltip: '未定',
