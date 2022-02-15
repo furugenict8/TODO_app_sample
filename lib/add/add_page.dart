@@ -37,10 +37,17 @@ class AddPage extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    // Firestoreに値を追加する。
-                    await model.add();
-                    //　追加ボタンを押したあと画面を閉じる。
-                    Navigator.pop(context);
+                    try {
+                      // Firestoreに値を追加する。
+                      await model.add();
+                      //　追加ボタンを押したあと画面を閉じる。
+                      Navigator.pop(context);
+                    } catch (e) {
+                      SnackBar snackBar = SnackBar(
+                        content: Text(e.toString()),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
                   },
                   child: const Text('追加'),
                 )
