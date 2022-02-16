@@ -86,7 +86,11 @@ class MainPage extends StatelessWidget {
             Consumer<MainModel>(builder: (context, model, child) {
           return FloatingActionButton(
             onPressed: () async {
-              await Navigator.push(
+              // Navigator.push()をbool変数に入れる。
+              //　bool変数にobjectを入れると、オブジェクトが入ればtrueを返す
+              // という意味になるみたい。
+              //　コードはhttps://youtu.be/nPAIXqGzjUM?t=1314
+              final bool? added = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => AddPage(model),
@@ -94,10 +98,18 @@ class MainPage extends StatelessWidget {
                   fullscreenDialog: true,
                 ),
               );
-              const snackBar = SnackBar(
-                content: Text('追加しました!'),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              // もしaddedがnullじゃない かつ addedがtrueなら実施する。
+              // added != nullは　Navigator.push()がaddedに入っている == FloatingActionButtonがpushされた時。
+              // addedはNavigator.push()がaddedに入っていればtrue
+              // どっちかだけでいい気がするがどっちも条件に入れるのはよくわかっていない。
+              if (added != null && added) {
+                SnackBar snackBar = const SnackBar(
+                  backgroundColor: Colors.green,
+                  content: Text('todoを追加しました！'),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+              model.getTodoListRealtime();
             },
             child: const Icon(Icons.add),
             tooltip: '未定',
