@@ -37,12 +37,14 @@ class AddPage extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    // model.add()のexceptionをtry catchでキャッチさせる
                     try {
                       // Firestoreに値を追加する。
                       await model.add();
                       //　追加ボタンを押したあと画面を閉じる。
-                      Navigator.pop(context);
+                      Navigator.of(context).pop(true);
                     } catch (e) {
+                      // exceptionがあったらSnackBarで表示させる。
                       SnackBar snackBar = SnackBar(
                         content: Text(e.toString()),
                       );
