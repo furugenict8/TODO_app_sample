@@ -39,17 +39,12 @@ class AddPage extends StatelessWidget {
                   onPressed: () async {
                     // model.add()のexceptionをtry catchでキャッチさせる
                     try {
-                      // Firestoreに値を追加する。
                       await model.add();
-                      //　追加ボタンを押したあと画面を閉じる。
-                      // (遷移元のNavigator.pushに戻ってtrueを渡す)
+                      //　追加ボタンを押したあと元のmain.dartのNavigator.pushしたところに
+                      // に戻る。その際にtrueを渡す
                       Navigator.of(context).pop(true);
                     } catch (e) {
-                      // exceptionがあったらSnackBarで表示させる。
-                      SnackBar snackBar = SnackBar(
-                        content: Text(e.toString()),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      // add()のバリデーションとかでexceptionがあった場合の処理をかく
                     }
                   },
                   child: const Text('追加'),

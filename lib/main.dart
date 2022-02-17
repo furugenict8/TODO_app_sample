@@ -1,11 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/main_model.dart';
 
 import 'add/add_page.dart';
-import 'edit_todo/edit_todo_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,39 +43,8 @@ class MainPage extends StatelessWidget {
           return ListView(
               children: todoList
                   .map(
-                    (todo) => Slidable(
-                      // The end action pane is the one at the right or the bottom side.
-                      endActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            // An action can be bigger than the others.
-                            onPressed: (BuildContext context) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditTodoPage(todo),
-                                ),
-                              );
-                              model.getTodoListRealtime();
-                            },
-                            backgroundColor: Colors.grey,
-                            foregroundColor: Colors.white,
-                            icon: Icons.edit,
-                            label: '編集',
-                          ),
-                          const SlidableAction(
-                            onPressed: doSomething,
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: '削除',
-                          ),
-                        ],
-                      ),
-                      child: ListTile(
-                        title: Text(todo.title!),
-                      ),
+                    (todo) => ListTile(
+                      title: Text(todo.title!),
                     ),
                   )
                   .toList());
