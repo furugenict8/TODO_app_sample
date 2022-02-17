@@ -86,7 +86,15 @@ class MainPage extends StatelessWidget {
             Consumer<MainModel>(builder: (context, model, child) {
           return FloatingActionButton(
             onPressed: () async {
-              await Navigator.push(
+              // Navigator.push()をbool変数に入れる。
+              //　AddPage()では編集ボタンを押すとNavigator.pop(true)で
+              // このNavigator.pushに戻ってくるが、今回はtrueを持っているので、
+              // trueがaddedに代入される。
+              // AddPage側の編集ボタンを押した時に呼ばれるadd()では
+              // バリデーションで文字が入った時のみ更新されてNavigator.pop→Navigator.pushに
+              // 戻ってくるようになっているので、実質戻ったらtrueが必ず入る。
+              //　コードはhttps://youtu.be/nPAIXqGzjUM?t=1314
+              final bool? added = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => AddPage(model),
@@ -94,6 +102,21 @@ class MainPage extends StatelessWidget {
                   fullscreenDialog: true,
                 ),
               );
+              // addedにNavigator.push()の戻り値(true)が入っている
+              // == AddPageで編集ボタンを押した時にTextFieldに文字が入っている
+              // ということ。
+              // addedにはnullかtrueどっちかが入るので以下の条件になっている。
+              // が、bool?ではなくboolにして
+              // ifの条件式もaddedだけでいい気がするが
+              // どっちも条件に入れるのはよくわかっていない。
+              if (added != null && added) {
+                SnackBar snackBar = const SnackBar(
+                  backgroundColor: Colors.green,
+                  content: Text('todoを追加しました！'),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+              model.getTodoListRealtime();
             },
             child: const Icon(Icons.add),
             tooltip: '未定',

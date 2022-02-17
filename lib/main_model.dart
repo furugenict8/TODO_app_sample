@@ -42,6 +42,11 @@ class MainModel extends ChangeNotifier {
   // Firestoreに値を追加するためのadd method
   // FirebaseがらみなのでFutureになってる多分。
   Future<void>? add() async {
+    // バリデーション
+    if (newTodoText == '') {
+      throw 'タイトルを入れてください';
+    }
+
     // CollectionReferenceのadd()はFutureを返すのでawaitしとく。
     await collection.add({
       'title': newTodoText,
