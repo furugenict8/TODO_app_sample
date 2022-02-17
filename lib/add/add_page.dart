@@ -42,6 +42,7 @@ class AddPage extends StatelessWidget {
                       // Firestoreに値を追加する。
                       await model.add();
                       //　追加ボタンを押したあと画面を閉じる。
+                      // (遷移元のNavigator.pushに戻ってtrueを渡す)
                       Navigator.of(context).pop(true);
                     } catch (e) {
                       // exceptionがあったらSnackBarで表示させる。
