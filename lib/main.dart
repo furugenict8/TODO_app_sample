@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/main_model.dart';
+import 'package:todoapp/todo.dart';
 
 import 'add/add_page.dart';
 import 'edit_todo/edit_todo_page.dart';
@@ -23,105 +24,119 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MainPage(),
+      home: MainPage(),
     );
   }
 }
 
 @immutable
 class MainPage extends StatelessWidget {
-  const MainPage({Key? key}) : super(key: key);
+  MainPage({Key? key}) : super(key: key);
+
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<MainModel>(
       create: (_) => MainModel()..getTodoList(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('todo app sample'),
-        ),
-        body: Consumer<MainModel>(builder: (context, model, child) {
-          final todoList = model.todoList;
-          return ListView(
-              children: todoList
-                  .map(
-                    (todo) => Slidable(
-                      // The end action pane is the one at the right or the bottom side.
-                      endActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            // An action can be bigger than the others.
-                            onPressed: (BuildContext context) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditTodoPage(todo),
-                                ),
+      // ScaffoldMessengerにkeyを持たせるため、ScaffoldをScaffoldMessengerでwrap
+      child: ScaffoldMessenger(
+        key: _scaffoldKey,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('todo app sample'),
+          ),
+          body: Consumer<MainModel>(builder: (context, model, child) {
+            final List<Todo> todoList = model.todoList;
+            final List<Widget> widgets = todoList
+                .map(
+                  (todo) => Slidable(
+                    // The end action pane is the one at the right or the bottom side.
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          // An action can be bigger than the others.
+                          onPressed: (BuildContext context) async {
+                            final String? updateTodoText = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditTodoPage(todo),
+                              ),
+                            );
+                            if (updateTodoText != null) {
+                              SnackBar snackBar = const SnackBar(
+                                backgroundColor: Colors.green,
+                                content: Text('todoを更新しました！'),
                               );
-                              model.getTodoListRealtime();
-                            },
-                            backgroundColor: Colors.grey,
-                            foregroundColor: Colors.white,
-                            icon: Icons.edit,
-                            label: '編集',
-                          ),
-                          const SlidableAction(
-                            onPressed: doSomething,
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: '削除',
-                          ),
-                        ],
-                      ),
-                      child: ListTile(
-                        title: Text(todo.title!),
-                      ),
+                              _scaffoldKey.currentState?.showSnackBar(snackBar);
+                            }
+                            model.getTodoListRealtime();
+                          },
+                          backgroundColor: Colors.grey,
+                          foregroundColor: Colors.white,
+                          icon: Icons.edit,
+                          label: '編集',
+                        ),
+                        const SlidableAction(
+                          onPressed: doSomething,
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: '削除',
+                        ),
+                      ],
                     ),
-                  )
-                  .toList());
-        }),
-        floatingActionButton:
-            Consumer<MainModel>(builder: (context, model, child) {
-          return FloatingActionButton(
-            onPressed: () async {
-              // Navigator.push()をbool変数に入れる。
-              //　AddPage()では編集ボタンを押すとNavigator.pop(true)で
-              // このNavigator.pushに戻ってくるが、今回はtrueを持っているので、
-              // trueがaddedに代入される。
-              // AddPage側の編集ボタンを押した時に呼ばれるadd()では
-              // バリデーションで文字が入った時のみ更新されてNavigator.pop→Navigator.pushに
-              // 戻ってくるようになっているので、実質戻ったらtrueが必ず入る。
-              //　コードはhttps://youtu.be/nPAIXqGzjUM?t=1314
-              final bool? added = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPage(model),
-                  //　fullscreenDialog: trueにするとpageが右からではなく下から出てくる。
-                  fullscreenDialog: true,
-                ),
-              );
-              // addedにNavigator.push()の戻り値(true)が入っている
-              // == AddPageで編集ボタンを押した時にTextFieldに文字が入っている
-              // ということ。
-              // addedにはnullかtrueどっちかが入るので以下の条件になっている。
-              // が、bool?ではなくboolにして
-              // ifの条件式もaddedだけでいい気がするが
-              // どっちも条件に入れるのはよくわかっていない。
-              if (added != null && added) {
-                SnackBar snackBar = const SnackBar(
-                  backgroundColor: Colors.green,
-                  content: Text('todoを追加しました！'),
+                    child: ListTile(
+                      title: Text(todo.title!),
+                    ),
+                  ),
+                )
+                .toList();
+            return ListView(children: widgets);
+          }),
+          floatingActionButton:
+              Consumer<MainModel>(builder: (context, model, child) {
+            return FloatingActionButton(
+              onPressed: () async {
+                // Navigator.push()をbool変数に入れる。
+                //　AddPage()では編集ボタンを押すとNavigator.pop(true)で
+                // このNavigator.pushに戻ってくるが、今回はtrueを持っているので、
+                // trueがaddedに代入される。
+                // AddPage側の編集ボタンを押した時に呼ばれるadd()では
+                // バリデーションで文字が入った時のみ更新されてNavigator.pop→Navigator.pushに
+                // 戻ってくるようになっているので、実質戻ったらtrueが必ず入る。
+                //　コードはhttps://youtu.be/nPAIXqGzjUM?t=1314
+                final bool? added = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPage(model),
+                    //　fullscreenDialog: trueにするとpageが右からではなく下から出てくる。
+                    fullscreenDialog: true,
+                  ),
                 );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
-              model.getTodoListRealtime();
-            },
-            child: const Icon(Icons.add),
-            tooltip: '未定',
-          );
-        }),
+                // addedにNavigator.push()の戻り値(true)が入っている
+                // == AddPageで編集ボタンを押した時にTextFieldに文字が入っている
+                // ということ。
+                // addedにはnullかtrueどっちかが入るので以下の条件になっている。
+                // が、bool?ではなくboolにして
+                // ifの条件式もaddedだけでいい気がするが
+                // どっちも条件に入れるのはよくわかっていない。
+                if (added != null && added) {
+                  SnackBar snackBar = const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text('todoを追加しました！'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+                model.getTodoListRealtime();
+              },
+              child: const Icon(Icons.add),
+              tooltip: '未定',
+            );
+          }),
+        ),
       ),
     );
   }
