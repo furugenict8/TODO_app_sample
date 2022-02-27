@@ -36,10 +36,20 @@ class EditTodoPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: model.isUpdated()
                       ? () async {
-                          // Firestoreに値を追加する。
-                          await model.update();
-                          //　追加ボタンを押したあと画面を閉じる。
-                          Navigator.pop(context);
+                          try {
+                            // Firestoreに値を追加する。
+                            await model.update();
+                            String? updateTodoText = model.updateTodoText;
+                            //　追加ボタンを押したあと画面を閉じる。
+                            Navigator.of(context).pop(updateTodoText);
+                          } catch (e) {
+                            //TODO(): update()でexceptionが発生した時の処理。
+                            SnackBar snackBar = SnackBar(
+                              content: Text(e.toString()),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
                         }
                       // onPressedはnullが入ると、非活性化（グレーアウトしてボタンが押せない）
                       : null,
