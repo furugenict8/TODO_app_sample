@@ -5,15 +5,18 @@ import 'package:todoapp/todo.dart';
 class MainModel extends ChangeNotifier {
   // collection todoListのためのListを用意。
   List<Todo> todoList = [];
+
   //　'title'フィールドに入力するためのtodoTextを用意
   String newTodoText = '';
+
+  String id = '';
+
   // Firestoreのcollection(今回はtodoList)を取得しておく。
   CollectionReference collection =
       FirebaseFirestore.instance.collection('todoList');
 
   Future getTodoList() async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('todoList').get();
+    final snapshot = await collection.get();
     final docs = snapshot.docs;
     final todoList = docs.map((doc) => Todo(doc)).toList();
     this.todoList = todoList;
@@ -39,6 +42,11 @@ class MainModel extends ChangeNotifier {
   // Firestoreに値を追加するためのadd method
   // FirebaseがらみなのでFutureになってる多分。
   Future<void>? add() async {
+    // バリデーション
+    if (newTodoText == '') {
+      throw 'タイトルを入れてください';
+    }
+
     // CollectionReferenceのadd()はFutureを返すのでawaitしとく。
     await collection.add({
       'title': newTodoText,
