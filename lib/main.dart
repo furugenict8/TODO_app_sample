@@ -66,9 +66,9 @@ class MainPage extends StatelessWidget {
                               ),
                             );
                             if (updateTodoText != null) {
-                              SnackBar snackBar = const SnackBar(
+                              SnackBar snackBar = SnackBar(
                                 backgroundColor: Colors.green,
-                                content: Text('todoを更新しました！'),
+                                content: Text('"$updateTodoText"を更新しました！'),
                               );
                               _scaffoldKey.currentState?.showSnackBar(snackBar);
                             }
