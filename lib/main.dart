@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatelessWidget {
   MainPage({Key? key}) : super(key: key);
 
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
   @override
@@ -42,7 +42,7 @@ class MainPage extends StatelessWidget {
       create: (_) => MainModel()..getTodoList(),
       // ScaffoldMessengerにkeyを持たせるため、ScaffoldをScaffoldMessengerでwrap
       child: ScaffoldMessenger(
-        key: _scaffoldKey,
+        key: _scaffoldMessengerKey,
         child: Scaffold(
           appBar: AppBar(
             title: const Text('todo app sample'),
@@ -57,20 +57,22 @@ class MainPage extends StatelessWidget {
                       motion: const ScrollMotion(),
                       children: [
                         SlidableAction(
-                          // An action can be bigger than the others.
                           onPressed: (BuildContext context) async {
+                            // Navigator.popの引数の値がここに返ってくるので、変数で受け取る。
                             final String? updateTodoText = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => EditTodoPage(todo),
                               ),
                             );
+                            // 上で受け取った値でif文を使った処理をしている。
                             if (updateTodoText != null) {
                               SnackBar snackBar = SnackBar(
                                 backgroundColor: Colors.green,
                                 content: Text('"$updateTodoText"を更新しました！'),
                               );
-                              _scaffoldKey.currentState?.showSnackBar(snackBar);
+                              _scaffoldMessengerKey.currentState
+                                  ?.showSnackBar(snackBar);
                             }
                             model.getTodoListRealtime();
                           },
@@ -79,8 +81,10 @@ class MainPage extends StatelessWidget {
                           icon: Icons.edit,
                           label: '編集',
                         ),
-                        const SlidableAction(
-                          onPressed: doSomething,
+                        SlidableAction(
+                          onPressed: (context) {
+                            return showConfirmDialog(context, todo);
+                          },
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
@@ -138,6 +142,29 @@ class MainPage extends StatelessWidget {
           }),
         ),
       ),
+    );
+  }
+
+  void showConfirmDialog(BuildContext context, Todo todo) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("削除の確認"),
+          content: Text('"${todo.title}"を削除しますか？'),
+          actions: [
+            TextButton(
+              child: const Text("いいえ"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: const Text("はい"),
+              onPressed: () => print('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
