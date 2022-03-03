@@ -2,7 +2,7 @@
 name: bug issue template
 about: バグとかexceptionが出たときのテンプレ。Flutter大学と同じ
 title: ''
-labels: ''
+labels: bug
 assignees: ''
 
 ---
