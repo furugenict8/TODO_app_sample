@@ -83,7 +83,7 @@ class MainPage extends StatelessWidget {
                         ),
                         SlidableAction(
                           onPressed: (context) {
-                            return showConfirmDialog(context, todo);
+                            return showConfirmDialog(context, todo, model);
                           },
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
@@ -145,8 +145,12 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  void showConfirmDialog(BuildContext context, Todo todo) {
-    showDialog(
+  void showConfirmDialog(
+    BuildContext context,
+    Todo todo,
+    MainModel model,
+  ) async {
+    return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) {
@@ -160,10 +164,22 @@ class MainPage extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
               );
             }),
-            TextButton(
-              child: const Text("はい"),
-              onPressed: () => print('OK'),
-            ),
+            Builder(builder: (context) {
+              return TextButton(
+                child: const Text("はい"),
+                onPressed: () async {
+                  // FirestoreのDeleteを実装する。
+                  await model.deleteTodo(todo);
+                  Navigator.pop(context);
+                  model.getTodoListRealtime();
+                  SnackBar snackBar = const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text('todoを削除しました。！'),
+                  );
+                  _scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+                },
+              );
+            }),
           ],
         );
       },

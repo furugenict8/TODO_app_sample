@@ -54,4 +54,8 @@ class MainModel extends ChangeNotifier {
     });
     notifyListeners();
   }
+
+  Future<void> deleteTodo(Todo todo) async {
+    return collection.doc(todo.documentID).delete();
+  }
 }
