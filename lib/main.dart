@@ -154,10 +154,12 @@ class MainPage extends StatelessWidget {
           title: const Text("削除の確認"),
           content: Text('"${todo.title}"を削除しますか？'),
           actions: [
-            TextButton(
-              child: const Text("いいえ"),
-              onPressed: () => Navigator.pop(context),
-            ),
+            Builder(builder: (context) {
+              return TextButton(
+                child: const Text("いいえ"),
+                onPressed: () => Navigator.pop(context),
+              );
+            }),
             TextButton(
               child: const Text("はい"),
               onPressed: () => print('OK'),
