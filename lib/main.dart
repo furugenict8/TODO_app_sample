@@ -171,11 +171,11 @@ class MainPage extends StatelessWidget {
                   // FirestoreのDeleteを実装する。
                   await model.deleteTodo(todo);
                   Navigator.pop(context);
-                  model.getTodoListRealtime();
-                  SnackBar snackBar = const SnackBar(
+                  SnackBar snackBar = SnackBar(
                     backgroundColor: Colors.green,
-                    content: Text('todoを削除しました。！'),
+                    content: Text('${todo.title}を削除しました。！'),
                   );
+                  model.getTodoListRealtime();
                   _scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
                 },
               );
